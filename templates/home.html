@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .hero {
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), var(--hero-bg) no-repeat center center/cover;
+        border-radius: 12px;
+        padding: 3rem 1.5rem; /* Reduced padding */
+        text-align: center;
+        margin-bottom: 2rem; /* Reduced margin */
+        box-shadow: 0 10px 30px var(--shadow);
+    }
+
+    [data-theme="light"] .hero {
+        background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.4)), var(--hero-bg) no-repeat center center/cover;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem; /* Reduced font size from 3.5rem */
+        margin-bottom: 0.5rem;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+
+    [data-theme="light"] .hero h1 {
+        color: var(--text-color);
+        text-shadow: none;
+    }
+    
+    .hero p {
+        font-size: 1rem; /* Reduced font size from 1.2rem */
+        margin-bottom: 1.5rem; /* Reduced margin */
+        color: var(--text-color);
+        opacity: 0.8;
+    }
+
+    [data-theme="dark"] .hero p {
+        color: #d1d1d1;
+    }
+
+    .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* smaller columns */
+        gap: 1.5rem; /* reduced gap */
+        margin-top: 1rem;
+    }
+
+    .movie-card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 6px var(--shadow);
+    }
+
+    .movie-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 20px var(--shadow);
+    }
+
+    .movie-poster {
+        width: 100%;
+        height: 280px; /* reduced height from 350px */
+        object-fit: cover;
+    }
+
+    .movie-info {
+        padding: 1rem; /* reduced padding */
+        text-align: center;
+    }
+
+    .movie-title {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="hero">
+    <h1>Welcome to CaseySHOS</h1>
+    <p>Experience the ultimate cinematic journey. Book your seats now for the latest blockbusters!</p>
+    <div style="display: flex; gap: 15px; justify-content: center;">
+        <a href="{% url 'movie_list' %}" class="btn">View All Movies &rarr;</a>
+        <a href="{% url 'booked_movies' %}" class="btn" style="background-color: transparent; border: 2px solid var(--primary); color: var(--primary);">Your Bookings</a>
+    </div>
+</div>
+
+<h2 style="margin: 0 0 1rem 0;">Now Showing</h2>
+
+<div class="movies-grid">
+    {% for movie in movies %}
+    <div class="movie-card">
+        {% if movie.poster_url %}
+        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster">
+        {% else %}
+        <img src="https://via.placeholder.com/300x450?text=No+Poster" alt="{{ movie.title }}" class="movie-poster">
+        {% endif %}
+        <div class="movie-info">
+            <h3 class="movie-title">{{ movie.title }}</h3>
+            <a href="{% url 'booking_schedule' movie.id %}" class="btn">Book Tickets</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>No movies showing right now. Please check back later.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

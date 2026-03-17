@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .booked-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .booking-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 1rem 1.5rem; /* Reduced padding */
+        margin-bottom: 1rem; /* Reduced margin */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px var(--shadow);
+        border-left: 5px solid var(--primary);
+    }
+
+    [data-theme="light"] .booking-card {
+        background-color: #ffffff;
+    }
+
+    .booking-main-info h3 {
+        margin: 0 0 0.25rem 0; /* tighter spacing */
+        color: var(--primary);
+        font-size: 1.2rem; /* slightly smaller title */
+    }
+
+    .booking-meta {
+        font-size: 0.95rem;
+        color: var(--text-color);
+        opacity: 0.7;
+    }
+
+    .booking-seats {
+        background-color: var(--bg-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        font-weight: 700;
+        margin-top: 0.5rem;
+        display: inline-block;
+        border: 1px solid var(--shadow);
+    }
+
+    .view-ticket-btn {
+        margin-left: 20px;
+    }
+
+    .no-bookings {
+        text-align: center;
+        padding: 5rem 0;
+        opacity: 0.5;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 1.5rem; /* Reduced margin */
+    }
+</style>
+
+<div class="booked-container">
+    <div class="page-header" style="margin-top: 0;">
+        <h1 style="margin: 0;">All Booked Movies</h1>
+        <p style="margin-top: 5px; opacity: 0.8;">Your theater's recent booking history</p>
+    </div>
+
+    {% for booking in bookings %}
+    <div class="booking-card">
+        <div class="booking-main-info">
+            <h3>{{ booking.showtime.movie.title }}</h3>
+            <div class="booking-meta" style="display: flex; gap: 15px;">
+                <div><strong>Booked by:</strong> {{ booking.user_name }}</div>
+                <div>|</div>
+                <div>{{ booking.showtime.date|date:"M d, Y" }} at {{ booking.showtime.time|time:"g:i A" }}</div>
+            </div>
+            <div class="booking-seats">
+                Seats: {% for seat in booking.seats_booked.all %}{{ seat.seat_number }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            </div>
+        </div>
+        <div class="view-ticket-btn">
+            <a href="{% url 'booking_confirmation' booking.id %}" class="btn">View Ticket</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="no-bookings">
+        <p>No bookings found in the system yet.</p>
+        <a href="{% url 'movie_list' %}" class="btn" style="margin-top: 20px;">Book Your First Movie</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .confirmation-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 2rem;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        color: #28a745;
+        margin-bottom: 1rem;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    @keyframes scaleIn {
+        0% { transform: scale(0); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .ticket {
+        background-color: var(--card-bg);
+        width: 100%;
+        max-width: 500px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px var(--shadow);
+        position: relative;
+        margin-top: 2rem;
+    }
+
+    [data-theme="light"] .ticket {
+        background-color: #ffffff;
+        border: 1px solid #eee;
+    }
+
+    .ticket-header {
+        background-color: var(--primary);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .ticket-header h3 {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 1.2rem;
+    }
+
+    .ticket-body {
+        padding: 2.5rem;
+        position: relative;
+    }
+
+    /* Ticket cutouts */
+    .ticket-body::before, .ticket-body::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 30px;
+        height: 30px;
+        background-color: var(--bg-color);
+        border-radius: 50%;
+        z-index: 2;
+    }
+
+    .ticket-body::before {
+        left: -15px;
+        transform: translateY(-50%);
+    }
+
+    .ticket-body::after {
+        right: -15px;
+        transform: translateY(-50%);
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px dashed var(--shadow);
+        padding-bottom: 0.8rem;
+    }
+
+    .info-label {
+        color: var(--text-color);
+        opacity: 0.6;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+
+    .info-value {
+        color: var(--text-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-align: right;
+    }
+
+    .movie-title-large {
+        font-size: 1.8rem;
+        color: var(--primary);
+        margin-bottom: 2rem;
+        text-align: center;
+        font-weight: 800;
+    }
+
+    .qr-placeholder {
+        width: 120px;
+        height: 120px;
+        background-color: #eee;
+        margin: 2rem auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .qr-text {
+        font-size: 0.7rem;
+        color: #999;
+        text-align: center;
+    }
+
+    .back-btn {
+        margin-top: 3rem;
+    }
+
+    .booking-id {
+        font-family: monospace;
+        font-size: 0.8rem;
+        opacity: 0.5;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="confirmation-container">
+    <div class="success-icon">✓</div>
+    <h1>Booking Confirmed!</h1>
+    <p>Your tickets have been successfully reserved.</p>
+
+    <div class="ticket">
+        <div class="ticket-header">
+            <h3>Movie Ticket</h3>
+        </div>
+        <div class="ticket-body">
+            <div class="movie-title-large">{{ booking.showtime.movie.title }}</div>
+            
+            <div class="info-row">
+                <span class="info-label">Name</span>
+                <span class="info-value">{{ booking.user_name }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Date</span>
+                <span class="info-value">{{ booking.showtime.date|date:"l, M d, Y" }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Time</span>
+                <span class="info-value">{{ booking.showtime.time|time:"g:i A" }}</span>
+            </div>
+
+            <div class="info-row" style="border-bottom: none;">
+                <span class="info-label">Seats</span>
+                <span class="info-value">
+                    {% for seat in booking.seats_booked.all %}
+                        {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+
+            <div class="qr-placeholder">
+                <div class="qr-text">SCANNABLE<br>CODE</div>
+            </div>
+
+            <div class="booking-id">ORDER ID: #{{ booking.id|stringformat:"08d" }}</div>
+        </div>
+    </div>
+
+    <div class="back-btn">
+        <a href="{% url 'home' %}" class="btn">Return to Home</a>
+    </div>
+</div>
+{% endblock %}

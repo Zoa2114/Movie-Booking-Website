@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V,s Booking</title>
+    <style>
+        :root {
+            /* Dark Mode (Default) */
+            --primary: #e50914;
+            --bg-color: #141414;
+            --text-color: #ffffff;
+            --card-bg: #2b2b2b;
+            --header-bg: #000;
+            --footer-bg: #000;
+            --shadow: rgba(0,0,0,0.5);
+            --header-link: #ffffff;
+            --hero-bg: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop');
+            --logo-color: var(--primary);
+        }
+
+        [data-theme="light"] {
+            /* Light Mode Palette: FFDCDC, FFF2EB, FFE8CD, FFD6BA */
+            --primary: #B03A2E; /* Much darker coral for readability */
+            --bg-color: #FFF2EB;
+            --text-color: #1a1a1a; /* Darker text for better contrast */
+            --card-bg: #FFE8CD;
+            --header-bg: #FFDCDC;
+            --footer-bg: #FFDCDC;
+            --shadow: rgba(0,0,0,0.15);
+            --header-link: #1a1a1a;
+            --hero-bg: url('https://images.unsplash.com/photo-1497124401559-3e75ec2ed7b4?q=80&w=2070&auto=format&fit=crop'); 
+            --logo-color: #B03A2E; 
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--shadow);
+            transition: background-color 0.3s;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--logo-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--header-link);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin-left: 20px;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(128, 128, 128, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem; /* reduced padding */
+            min-height: 75vh;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: #ffffff; /* Consistent white text for readability */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        [data-theme="dark"] .btn {
+            color: #ffffff;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .message.success {
+            background-color: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+
+        .message.error {
+            background-color: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #ff6b6b;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem; /* reduced padding */
+            background-color: var(--footer-bg);
+            margin-top: 1.5rem; /* reduced margin */
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: background-color 0.3s;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateToggleButton(currentTheme);
+
+            themeToggle.addEventListener('click', () => {
+                let theme = document.documentElement.getAttribute('data-theme');
+                let newTheme = theme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateToggleButton(newTheme);
+            });
+
+            function updateToggleButton(theme) {
+                themeToggle.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+            }
+        });
+    </script>
+</head>
+<body data-theme="dark">
+
+    <header>
+        <a href="{% url 'home' %}" class="logo">CaseySHOS</a>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'movie_list' %}">Movies</a>
+            <a href="{% url 'booked_movies' %}">Bookings</a>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CaseySHOS Movie Booking. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

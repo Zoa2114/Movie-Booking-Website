@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .schedule-header {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        background-color: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px var(--shadow);
+    }
+
+    .movie-poster-small {
+        width: 150px;
+        height: 225px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .movie-details h1 {
+        margin: 0 0 1rem 0;
+        color: var(--primary);
+    }
+
+    .movie-details p {
+        color: var(--text-color);
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+
+    .schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .date-group {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .date-group h3 {
+        margin: 0 0 1rem 0;
+        border-bottom: 2px solid var(--shadow);
+        padding-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .showtime-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .showtime-badge {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        border: 1px solid var(--shadow);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .showtime-badge:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        transform: translateY(-3px);
+    }
+
+    .showtime-price {
+        font-size: 0.8rem;
+        color: var(--text-color);
+        opacity: 0.6;
+        margin-top: 5px;
+    }
+
+    .showtime-badge:hover .showtime-price {
+        opacity: 1;
+    }
+</style>
+
+<div class="schedule-header">
+    {% if movie.poster_url %}
+    <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-small">
+    {% else %}
+    <img src="https://via.placeholder.com/150x225?text=No+Poster" alt="{{ movie.title }}" class="movie-poster-small">
+    {% endif %}
+    
+    <div class="movie-details">
+        <h1>{{ movie.title }}</h1>
+        <p><strong>Duration:</strong> {{ movie.duration_minutes }} mins</p>
+        <p>{{ movie.description }}</p>
+    </div>
+</div>
+
+<h2>Available Showtimes</h2>
+
+{% if showtimes %}
+    <div class="schedule-list">
+        {% regroup showtimes by date as date_list %}
+        
+        {% for date_group in date_list %}
+        <div class="date-group">
+            <h3>{{ date_group.grouper|date:"l, F j, Y" }}</h3>
+            <div class="showtime-badges">
+                {% for showtime in date_group.list %}
+                <a href="{% url 'booking_status' showtime.id %}" class="showtime-badge">
+                    <span>{{ showtime.time|time:"g:i A" }}</span>
+                    <span class="showtime-price">${{ showtime.price }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No showtimes available for this movie.</p>
+{% endif %}
+
+{% endblock %}
